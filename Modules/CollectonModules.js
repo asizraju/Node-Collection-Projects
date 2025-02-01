@@ -70,17 +70,17 @@ class connection {
     // }
 
     static async createarrays(data) {
-        const { 
-            client_name, 
-            client_contact, 
-            client_city, 
-            amount, 
-            date, 
-            updated_amount, 
-            paid_amount_time, 
-            paid_amount_date, 
-            overall_amount, 
-            paid_and_unpaid, 
+        const {
+            client_name,
+            client_contact,
+            client_city,
+            amount,
+            date,
+            updated_amount,
+            paid_amount_time,
+            paid_amount_date,
+            overall_amount,
+            paid_and_unpaid,
             success_and_unsuccess,
             send,
             sent,
@@ -93,17 +93,19 @@ class connection {
             accoun_type,
             name_of_the_beneficiary,
             address_of_the_beneficiary,
-            sender_information
+            sender_information,
+            narration,
+            bank_type
         } = data;
-    
+
         // Insert the 'send' and 'sent' fields as boolean values (true/false)
         const result = await connection.query(
-            'INSERT INTO collectionlistarrayss (client_name, client_contact, client_city, amount, date, updated_amount, paid_amount_time, paid_amount_date, overall_amount, paid_and_unpaid, success_and_unsuccess, send, sent, user_id, picture, today_rate,accno,bank_name,ifsc_code,accoun_type,name_of_the_beneficiary,address_of_the_beneficiary,sender_information) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)',
+            'INSERT INTO collectionlistarrayss (client_name, client_contact, client_city, amount, date, updated_amount, paid_amount_time, paid_amount_date, overall_amount, paid_and_unpaid, success_and_unsuccess, send, sent, user_id, picture, today_rate,accno,bank_name,ifsc_code,accoun_type,name_of_the_beneficiary,address_of_the_beneficiary,sender_information,narration,bank_type) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)',
             [
                 client_name,             // Store as plain value
                 JSON.stringify(client_contact), // Store as JSON array (if it is an array)
                 client_city,             // Store as plain value
-                JSON.stringify(amount), 
+                JSON.stringify(amount),
                 JSON.stringify(date),    // Store as JSON array (if it is an array)
                 JSON.stringify(updated_amount),  // Store as JSON array (if it is an array)
                 JSON.stringify(paid_amount_time),     // Store as JSON array (if it is an array)
@@ -122,14 +124,16 @@ class connection {
                 JSON.stringify(accoun_type),
                 JSON.stringify(name_of_the_beneficiary),
                 JSON.stringify(address_of_the_beneficiary),
-                JSON.stringify(sender_information)  
+                JSON.stringify(sender_information),
+                JSON.stringify(narration),
+                JSON.stringify(bank_type)
             ]
         );
-        
+
         return result.insertId;
     }
-    
-    
+
+
     static async clientupdate(client_id, data) {
         const { client_name, client_contact, client_city, amount, updated_amount, overall_amount, success_and_unsuccess, sent,
             today_rate,
@@ -139,10 +143,12 @@ class connection {
             accoun_type,
             name_of_the_beneficiary,
             address_of_the_beneficiary,
-            sender_information
+            sender_information,
+            narration,
+            bank_type
         } = data
         const result = await connection.query(
-            'UPDATE collectionlistarrayss SET client_name = ?, client_contact = ?, client_city = ?, amount = ?,  updated_amount = ?, overall_amount = ?,  success_and_unsuccess = ? , sent = ?,today_rate = ? , accno = ?,bank_name= ?,ifsc_code= ?,accoun_type=?,name_of_the_beneficiary =?,address_of_the_beneficiary =?,sender_information=? WHERE client_id = ?',
+            'UPDATE collectionlistarrayss SET client_name = ?, client_contact = ?, client_city = ?, amount = ?,  updated_amount = ?, overall_amount = ?,  success_and_unsuccess = ? , sent = ?,today_rate = ? , accno = ?,bank_name= ?,ifsc_code= ?,accoun_type=?,name_of_the_beneficiary =?,address_of_the_beneficiary =?,sender_information=? ,narration = ?,bank_type = ? WHERE client_id = ?',
             [client_name,
                 JSON.stringify(client_contact),
                 client_city,
@@ -159,11 +165,12 @@ class connection {
                 JSON.stringify(name_of_the_beneficiary),
                 JSON.stringify(address_of_the_beneficiary),
                 JSON.stringify(sender_information),
+                JSON.stringify(narration),
+                JSON.stringify(bank_type),
                 client_id]
         );
         return result;
     }
-
 
 
     static async update(client_id, data) {

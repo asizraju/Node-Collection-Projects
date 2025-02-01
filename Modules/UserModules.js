@@ -49,19 +49,19 @@ class User {
     return result;
   }
 
-  static async update(user_id, username, phone_number, city, role, photo) {
+  static async update(user_id,data) {
     try {
-      // SQL query to update the user information
-      const result = await User.query(
-        "UPDATE registertable SET username = ?, phone_number = ?, city = ?, role = ?, photo = ? , WHERE user_id = ?",
-        [username, phone_number, city, role, photo, user_id]
-      );
-      return result; // Returns the result of the update operation
+        const {email, username, phone_number, city, role, photo} = data
+        const result = await User.query(
+            'UPDATE registertable SET email = ?, username = ?, phone_number = ?, city = ?, role = ?, photo = ? WHERE user_id = ?',
+            [email, username,  phone_number, city, role, photo,user_id]
+        );
+        return result;  // Returns the result of the update operation
     } catch (error) {
-      console.error("Error updating user: ", error);
-      throw error; // Rethrow the error so it can be handled later
+        console.error("Error updating user: ", error);
+        throw error;  // Rethrow the error so it can be handled later
     }
-  }
+}
 
   static async fetchUserlistID() {
     try {

@@ -25,7 +25,7 @@ exports.createCollection = async (req, res) => {
             Sucess_and_unsucess
         });
 
-        res.status(201).json({ message: 'Account created successfully', collectionID });
+        res.status(201).json({ message: 'Account created successfully' });
     } catch (err) {
         console.error(err);
         res.status(500).json({ error: 'Failed to create account' });
@@ -72,18 +72,18 @@ exports.createCollectionarray =
         });
 
         // Send response with the created collection ID
-        res.status(201).json({ message: 'Account created successfully', collectionID });
+        res.status(201).json({ message: 'Account created successfully' });
     } catch (err) {
         console.error(err);
         res.status(500).json({ error: 'Failed to create account' });
     }
 };
 
+
 exports.createCollectionarrays = [
     UserImages.single('picture'), // This handles the file upload for the 'picture' field
     async (req, res) => {
         try {
-            
             const picturePath = req.file ? req.file.path : null;
             const data = {
                 client_name: req.body.client_name,
@@ -108,20 +108,17 @@ exports.createCollectionarrays = [
                 accoun_type:req.body.accoun_type,
                 name_of_the_beneficiary:req.body.name_of_the_beneficiary,
                 address_of_the_beneficiary:req.body.address_of_the_beneficiary,
-                sender_information:req.body.sender_information
+                sender_information:req.body.sender_information,
+                narration:req.body.narration,
+                bank_type:req.body.bank_type
             };
             const result = await Collectiondata.createarrays(data);            
-            res.status(200).json({ message: 'Data inserted successfully', id: result,
-                 Data:data
-             });
+            res.status(200).json({ message: 'Data inserted successfully'});
         } catch (error) {
             res.status(500).json({ message: 'Error inserting data', error: error.message });
         }
     }
 ];
-
-
-
 
 exports.clientupdate = async (req,res) =>{
     try {
@@ -146,6 +143,7 @@ exports.update = async (req, res) => {
         res.status(400).json({ error: 'Failed to update Collection' });
     }
 };
+
 
 exports.pushClientID = [
     async (req,res) =>{

@@ -75,7 +75,7 @@ exports.createUser = [
         const result = await User.create(user);  // Ensure this function handles the DB insertion
   
         // Send a success response
-        res.status(201).json({ message: 'User Created Successfully',id: result });
+        res.status(201).json({ message: 'User Created Successfully' });
       } catch (error) {
         // Handle any errors
         console.error(error);
