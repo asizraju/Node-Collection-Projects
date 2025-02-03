@@ -46,13 +46,16 @@ const UserImages = require ("../Uploads/Upload")
 // ];
 
 
-
-
 // Define the route handler for user creation
+const isValidEmail = (email) => /^[a-z0-9]+@[a-z0-9]+\.[a-z]{2,}$/.test(email);
+
 exports.createUser = [
     UserImages.single('photo'),  // Multer middleware for handling 'photo' field
     async (req, res) => {
       try {
+        if (!isValidEmail(req.body.email)) {
+            return res.status(400).json({error:'Invalid Email Formate'})
+        }
         // Hash the password
         const hashedPassword = await bcrypt.hash(req.body.password, 10);
   
@@ -75,7 +78,7 @@ exports.createUser = [
         const result = await User.create(user);  // Ensure this function handles the DB insertion
   
         // Send a success response
-        res.status(201).json({ message: 'User Created Successfully' });
+        res.status(201).json({ message: 'User Created Successfully',id: result });
       } catch (error) {
         // Handle any errors
         console.error(error);
@@ -85,9 +88,74 @@ exports.createUser = [
   ];
 
   
+// exports.loginUser = async (req, res) => {
+//     try {
+//         const { email, password } = req.body;
+
+//         // Find the user by email (case-sensitive)
+//         const user = await User.findByEmail(email);
+//         if (!user) {
+//             return res.status(404).send({
+//                 userFound: false,
+//                 message: 'User Not Available'
+//             });
+//         }
+//         // Compare the password with the hashed password in the database
+//         const isMatch = await bcrypt.compare(password, user.password);
+//         if (!isMatch) {
+//             return res.status(401).send({
+//                 userFound: true,
+//                 message: 'Password Not Matching'
+//             });
+//         }
+
+//         const token = jwt.sign(
+//             {user_id : user.user_id,
+//                 email : user.email,
+//                 role : user.role},
+//                 'HCC-COLLECTION-PROJECT'
+//                 // {expiresIn:'5m'}
+//         )
+//         res.status(200).send({
+//             userFound: true,
+//             token,
+//             message: 'Login Successfully',
+//             user: {
+//                 user_id: user.user_id,
+//                 username: user.username,
+//                 email: user.email, 
+//                 // phone_number: user.phone_number,
+//                 role:user.role,
+//                 // sent:user.sent
+//             }
+//         });
+
+//     } catch (error) {
+//         console.error(error.message);
+//         res.status(500).json({ error: 'Error Logging In' });
+//     }
+// };
+
+
+const validator = require('validator'); // Make sure to install the validator package
+
 exports.loginUser = async (req, res) => {
     try {
         const { email, password } = req.body;
+
+        // Check if email format is valid
+        if (!isValidEmail(email)) {
+            return res.status(400).json({ error: 'Invalid Email Format' });
+        }
+
+
+        // Optional: Check for specific domain, e.g., only allow "@company.com"
+        if (!email.endsWith('@gmail.com')) {
+            return res.status(400).send({
+                userFound: false,
+                message: 'Only emails from @gmail.com are allowed'
+            });
+        }
 
         // Find the user by email (case-sensitive)
         const user = await User.findByEmail(email);
@@ -97,6 +165,7 @@ exports.loginUser = async (req, res) => {
                 message: 'User Not Available'
             });
         }
+
         // Compare the password with the hashed password in the database
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) {
@@ -106,13 +175,14 @@ exports.loginUser = async (req, res) => {
             });
         }
 
+        // Generate JWT token
         const token = jwt.sign(
-            {user_id : user.user_id,
-                email : user.email,
-                role : user.role},
-                'HCC-COLLECTION-PROJECT'
-                // {expiresIn:'30m'}
-        )
+            { user_id: user.user_id, email: user.email, role: user.role },
+            'HCC-COLLECTION-PROJECT'
+            // {expiresIn: '5m'} // Optional expiry
+        );
+
+        // Respond with success message and token
         res.status(200).send({
             userFound: true,
             token,
@@ -120,10 +190,8 @@ exports.loginUser = async (req, res) => {
             user: {
                 user_id: user.user_id,
                 username: user.username,
-                email: user.email, 
-                // phone_number: user.phone_number,
-                role:user.role,
-                // sent:user.sent
+                email: user.email,
+                role: user.role,
             }
         });
 
