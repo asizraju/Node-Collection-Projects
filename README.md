@@ -5,6 +5,6 @@ This Node.js project demonstrates the usage of a registertable for employeslist 
 
 cd node-project
 
-Database Structure:
+Database Structure-node:
 RegisterTable: This table stores user registrations with attributes like name, email, and registration time.
 CollectionList: A dynamic list that keeps track of collections based on registered entries"# Backend-Collection" 
