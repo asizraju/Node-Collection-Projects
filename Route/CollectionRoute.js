@@ -22,8 +22,12 @@ router.post('/acc_insertarray',CollectionController.createCollectionarray)
 router.post('/acc_insertarrays',CollectionController.createCollectionarrays)
 
 router.get ('/acc_list',verifytoken,staffonly,CollectionController.list);
+// router.get ('/acc_list',CollectionController.list);
+
+router.get ('/acc_list_manager',CollectionController.list);
+
 router.get('/acc_fetchlist',CollectionController.fetchlist);
-router.delete('/acc_delete/:id',verifytoken,adminonly,CollectionController.delete)
+router.delete('/acc_delete/:id',CollectionController.delete)
 router.put('/acc_updated/:id',CollectionController.update)//
 router.put ('/updated_bankdetails/:id',CollectionController.updatebankdetails)
 router.put ('/acc_clientupdated/:id',CollectionController.clientupdate)

@@ -1,9 +1,10 @@
 const { default: axios } = require("axios");
 const User = require("../Modules/UserModules")
-// const bcrypt = require('bcrypt');
-const bcrypt = require('bcryptjs');
+const crypto = require ("crypto")
+const bcrypt = require('bcrypt');
 const jwt = require ("jsonwebtoken")
-const UserImages = require ("../Uploads/Upload")
+const UserImages = require ("../Uploads/Upload");
+const { error } = require("console");
 
 
 
@@ -44,6 +45,8 @@ const UserImages = require ("../Uploads/Upload")
 //         }
 //     }
 // ];
+
+
 
 
 // Define the route handler for user creation
@@ -202,6 +205,7 @@ exports.loginUser = async (req, res) => {
 };
 
 
+
 exports.list = async (req, res) => {
     try {
         const user = await User.findAll()
@@ -237,6 +241,7 @@ exports.delete = [
 
 exports.update = [
     async (req,res) =>{
+        // const {email,username,phone_number,photo,city,role} = req.body
         try {
             await User.update (req.params.id , req.body)
             res.status (200).json({message:'User Updated Successfully'})
@@ -265,26 +270,96 @@ exports.fetchUserID = async (req, res) => {
     }
 };
 
- // Assuming express-validator is used
 
-exports.fetchUserIDS = async (req, res) => {
-    
+
+
+// exports.resetPassword= async(req, res) => {
+//     const { token, newPassword } = req.body;
+
+//     User.findByResetToken(token, (err, users) => {
+//       if (err || users.length === 0) {
+//         return res.status(400).json({ message: 'Invalid or expired token' });
+//       }
+
+//       const user = users[0];
+
+//       if (user.reset_token_expiry < new Date()) {
+//         return res.status(400).json({ message: 'Reset token has expired' });
+//       }
+
+//       // Hash the new password
+//       bcrypt.hash(newPassword, 10, (err, hashedPassword) => {
+//         if (err) {
+//           return res.status(500).json({ message: 'Error hashing password', error: err });
+//         }
+
+//         // Update the password in the database
+//         User.updatePassword(user.id, hashedPassword, (err, result) => {
+//           if (err) {
+//             return res.status(500).json({ message: 'Error updating password', error: err });
+//           }
+
+//           // Clear the reset token fields after successful reset
+//           User.clearResetToken(user.id, (err) => {
+//             if (err) {
+//               return res.status(500).json({ message: 'Error clearing reset token', error: err });
+//             }
+
+//             res.status(200).json({ message: 'Password reset successfully' });
+//           });
+//         });
+//       });
+//     });
+//   },
+
+  
+exports.requestupdate_password  = async (req,res) =>{
     try {
-        const user = await User.fetchUserlistIDS(req.params.id); // Assuming this method fetches the user list
+        const {email} = req.body
+        const user  = await User.findByEmail(email)
+        if (!user|| user.length === 0 ) {
+            return res.status(404).json ({message :"Email-ID Not Available"})
+        }   
+        const resettoken = crypto.randomBytes(32).toString('hex')
+        const resettokenExpiry = new Date(Date.now()+3600000)
+        try {
+            await User.updateResetToken(user.email,resettoken,resettokenExpiry)
+
+        } catch (error) {
+            return res.status(500).json({message:'Error updating rest token' ,error:error.message})
+        }
         res.status(200).json({
-            success: true,
-            clientdata: user // Sending the fetched user data in the response
-        });
+            message :"Password reset token genrated. please check your email ." , resettoken
+        })
     } catch (error) {
-        console.error(error.message, "FetchUser List Error");
-        res.status(500).json({
-            success: false,
-            message: "Error occurred while fetching users",
-            error: error.message // Optional: Include the error message for debugging
-        });
+        console.error ("Error updated password" , error)
+        res.status(400).json({error:error.message || "Failed  to Request password link"})
+    }
+}
+
+
+exports.restPassword = async (req, res) => {
+    try {
+        // Find the user by email provided in the request
+        const user = await User.findByEmail({ email: req.body.email });
+        if (!user) {
+            return res.status(400).json({ message: "User not found" });
+        }
+
+        const hashedPassword = await bcrypt.hash(req.body.password, 10);
+        try {
+            await User.updated_Password(email, hashedPassword); // Assuming updatePassword is the correct method
+        } catch (error) {
+            return res.status(500).json({ message: "Error updating password", error: error });
+        }
+
+        return res.status(200).json({ message: "Password reset successfully" });
+
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({ message: "Error resetting password", error: error });
     }
 };
-
 
 
 exports.updatepassword = async (req, res) => {
@@ -309,3 +384,57 @@ exports.updatepassword = async (req, res) => {
         return res.status(500).json({ success: false, message: 'Error updating password' });
     }
 };
+
+
+// exports.requestupdate_password = async (req, res) => {
+//     try {
+//         const { email } = req.body;
+
+//         // Find the user by email
+//         const user = await User.findByEmail(email);
+
+//         // Check if user exists
+//         if (!user || user.length === 0) {
+//             return res.status(404).json({ message: "Email-ID Not Available" });
+//         }
+
+//         // Generate a reset token and its expiration time
+//         const resettoken = crypto.randomBytes(32).toString('hex');
+//         const resettokenExpiry = new Date(Date.now() + 3600000); // 1 hour expiry
+
+//         // Update the reset token and its expiry in the database
+//         await User.updateResetToken(user.id, resettoken, resettokenExpiry);
+//         res.status(200).json({
+//             message: "Password reset token generated. Please check your email."
+//         });
+
+//     } catch (error) {
+//         console.error("Error updating password:", error);
+//         res.status(400).json({ error: error.message || "Failed to request password link" });
+//     }
+// };
+
+ // Reset Password (Verify Token and Update Password)
+
+ // Assuming express-validator is used
+
+exports.fetchUserIDS = async (req, res) => {
+    
+    try {
+        const user = await User.fetchUserlistIDS(req.params.id); // Assuming this method fetches the user list
+        res.status(200).json({
+            success: true,
+            clientdata: user // Sending the fetched user data in the response
+        });
+    } catch (error) {
+        console.error(error.message, "FetchUser List Error");
+        res.status(500).json({
+            success: false,
+            message: "Error occurred while fetching users",
+            error: error.message // Optional: Include the error message for debugging
+        });
+    }
+};
+
+
+

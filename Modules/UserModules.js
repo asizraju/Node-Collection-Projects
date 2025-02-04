@@ -1,55 +1,54 @@
 const { Collection } = require("mongoose");
-const db = require("../config/Database");
-const bcrypt = require("bcryptjs");
-const UserImages = require("../Uploads/Upload");
+const db = require ("../config/Database");
+const UserImages = require ("../Uploads/Upload")
 // const { create } = require("./CollectonModules");
 
+
 class User {
-  static query(sql, params) {
-    return new Promise((resolve, reject) => {
-      db.query(sql, params, (err, results) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve(results);
-        }
-      });
-    });
-  }
+    static query (sql,params) {
+        return new Promise ((resolve,reject)=>{
+            db.query (sql,params,(err,results)=>{
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve(results)
+                }
+            })
+        })
+    }
 
-  // const Users = {
-  //     create: (username, email, hashedPassword, role, callback) => {
-  //       const query = 'INSERT INTO users (username, email, encrypted_password, role) VALUES (?, ?, ?, ?)';
-  //       db.query(query, [username, email, hashedPassword, role], callback);
-  //     },
+// const Users = {
+//     create: (username, email, hashedPassword, role, callback) => {
+//       const query = 'INSERT INTO users (username, email, encrypted_password, role) VALUES (?, ?, ?, ?)';
+//       db.query(query, [username, email, hashedPassword, role], callback);
+//     },
 
-  // }
+// }
 
-  static async create(data) {
-    const { username, email, password, phone_number, city, photo, role, sent } =
-      data;
+
+
+static async create (data) {
+  
+    const {username , email , password, phone_number ,city, photo,role,sent } = data
 
     const result = await User.query(
-      "INSERT INTO registertable (username , email, password , phone_number ,city,photo, role,sent ) VALUES (?,?,?,?,?,?,?,?)",
-      [username, email, password, phone_number, city, photo, role, sent]
+        'INSERT INTO registertable (username , email, password , phone_number ,city,photo, role,sent ) VALUES (?,?,?,?,?,?,?,?)',
+        [username, email,password,phone_number ,city,photo, role,sent]
     );
     return result.insertid;
-  }
+}
 
-  static async findAll() {
-    const result = await User.query("SELECT * FROM registertable");
+static async findAll() {
+    const result = await User.query('SELECT * FROM registertable');
     return result; // Array of user objects
-  }
+}
 
-  static async delete(user_id) {
-    const result = await User.query(
-      "DELETE FROM registertable WHERE user_id = ?",
-      [user_id]
-    );
+static async delete(user_id) {
+    const result = await User.query('DELETE FROM registertable WHERE user_id = ?', [user_id]);
     return result;
-  }
+}
 
-  static async update(user_id,data) {
+static async update(user_id,data) {
     try {
         const {email, username, phone_number, city, role, photo} = data
         const result = await User.query(
@@ -63,11 +62,11 @@ class User {
     }
 }
 
-  static async fetchUserlistID() {
+static async fetchUserlistID() {
     try {
-      const resultUser = await User.query("SELECT * FROM registertable");
-
-      const query = `
+        const resultUser = await User.query('SELECT * FROM registertable');
+        
+        const query = `
             SELECT 
                 U.user_id,
                 U.username,
@@ -92,41 +91,39 @@ class User {
                 collectionlistarrayss c ON U.user_id = c.user_id
         `;
 
-      const resultCollection = await User.query(query);
+        const resultCollection = await User.query(query);
 
-      // Example of working with the arrays if needed
-      const combinedData = resultUser.map((user) => {
-        // Find matching collection for each user
-        const userCollection = resultCollection.filter(
-          (collection) => collection.user_id === user.user_id
-        );
+        // Example of working with the arrays if needed
+        const combinedData = resultUser.map(user => {
+            // Find matching collection for each user
+            const userCollection = resultCollection.filter(collection => 
+                
+                collection.user_id === user.user_id);
+            return {
+                ...user,
+                collections: userCollection // Adding collections data to user object
+            };
+        });
+
         return {
-          ...user,
-          collections: userCollection, // Adding collections data to user object
+            // Userlist: resultUser,
+            // Collectionlist: resultCollection,
+            CombinedData: combinedData // Returning combined data with user and collections merged
         };
-      });
 
-      return {
-        // Userlist: resultUser,
-        // Collectionlist: resultCollection,
-        CombinedData: combinedData, // Returning combined data with user and collections merged
-      };
     } catch (error) {
-      console.error(error.message, "Error fetching user details");
-      throw new Error("Error fetching all details");
+        console.error(error.message, "Error fetching user details");
+        throw new Error("Error fetching all details");
     }
-  }
+}
 
-  static async fetchUserlistIDS(user_id) {
+static async fetchUserlistIDS(user_id) {
     try {
-      // Query for user details from the registertable based on a specific user_id
-      const resultUser = await User.query(
-        "SELECT * FROM registertable WHERE user_id = ?",
-        [user_id]
-      );
-
-      // Query for collections data based on the provided user_id
-      const query = `
+        // Query for user details from the registertable based on a specific user_id
+        const resultUser = await User.query('SELECT * FROM registertable WHERE user_id = ?', [user_id]);
+        
+        // Query for collections data based on the provided user_id
+        const query = `
             SELECT 
                 U.user_id,
                 U.username,
@@ -152,30 +149,57 @@ class User {
             WHERE
                 U.user_id = ?
         `;
-      const resultCollection = await User.query(query, [user_id]);
+        const resultCollection = await User.query(query, [user_id]);
 
-      // Combine user and collection data into a single object
-      const combinedData = resultUser.map((user) => {
-        const userCollection = resultCollection.filter(
-          (collection) => collection.user_id === user.user_id
-        );
+        // Combine user and collection data into a single object
+        const combinedData = resultUser.map(user => {
+            const userCollection = resultCollection.filter(collection => collection.user_id === user.user_id);
+            return {
+                ...user,
+                collections: userCollection // Adding collections data to the user object
+            };
+        });
+
         return {
-          ...user,
-          collections: userCollection, // Adding collections data to the user object
+            CombinedData: combinedData // Returning combined data with user and collections merged
         };
-      });
 
-      return {
-        CombinedData: combinedData, // Returning combined data with user and collections merged
-      };
     } catch (error) {
-      console.error(error.message, "Error fetching user details");
-      throw new Error("Error fetching user details");
+        console.error(error.message, "Error fetching user details");
+        throw new Error("Error fetching user details");
     }
-  }
+}
 
- 
-  static async findByEmail(email) {
+static async login(email, password) {
+    
+    const user = await User.findByEmail(email);
+    if (!user) {
+        throw new Error('User not found');
+    }
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+
+    if (!isPasswordValid) {
+      
+        throw new Error('Invalid password');
+    }
+    return user;
+}
+
+static async updateResetToken(email, token) {
+    try {
+        const result = await User.query(
+            'UPDATE registertable SET rest_token = ?, rest_token_expiry = ? WHERE email = ?',
+            [token, email]
+        );
+        return result;
+    } catch (error) {
+        console.error("Token not generated", error);
+    }
+}
+
+
+
+static async findByEmail(email) {
     const result = await User.query("SELECT * FROM registertable WHERE email = ?", [email]);
     return result.length ? result[0] : null; // Return user if found, otherwise return null
 }
@@ -194,42 +218,44 @@ static async updated_Password(email, password) {
     }
 }
 
-  static async login(email, password) {
-    const user = await User.findByEmail(email);
-    if (!user) {
-      throw new Error("User not found");
+static async setResetToken(email, token, expiry) {
+    try {
+        const result = await User.query(
+            'UPDATE users SET reset_token = ?, reset_token_expiry = ? WHERE email = ?',
+            [token, expiry, email]
+        );
+        return result;
+    } catch (error) {
+        // Log the error for debugging purposes
+        console.error('Error updating reset token:', error);
+        throw error;  // Optional: rethrow the error so it can be handled by the caller
     }
-    const isPasswordValid = await bcrypt.compare(password, user.password);
-
-    if (!isPasswordValid) {
-      throw new Error("Invalid password");
-    }
-    return user;
-  }
-
-  static async updated_Password(email, password) {
-
-  }
-
-  static async creates(data) {
-    const {
-      username,
-      email,
-      password,
-      phone_number,
-      city,
-      role,
-      photo,
-      send,
-      id,
-    } = data;
-
-    const result = await User.query(
-      "INSERT INTO registertables (username , email, password , phone_number ,city, role , photo,send,id ) VALUES (?,?,?,?,?,?,?,?,?)",
-      [username, email, password, phone_number, city, role, photo, send, id]
-    );
-    return result.insertid;
-  }
 }
 
-module.exports = User;
+static async clearResetToken(email) { 
+    try {
+        const result = await User.query(
+            'UPDATE users SET reset_token = NULL, reset_token_expiry = NULL WHERE email = ?',
+            [email]
+        );
+        return result;
+    } catch (error) {
+        // Log the error for debugging purposes
+        console.error('Error clearing reset token:', error);
+        throw error;  // Optional: rethrow the error so it can be handled by the caller
+    }
+}
+
+static async creates (data) {
+    const {username , email , password, phone_number ,city, role , photo ,send,id } = data
+
+    const result = await User.query(
+        'INSERT INTO registertable (username , email, password , phone_number ,city, role , photo,send,id ) VALUES (?,?,?,?,?,?,?,?,?)',
+        [username, email,password,phone_number ,city, role , photo ,send,id]
+    );
+    return result.insertid;
+}
+
+}
+
+module.exports = User

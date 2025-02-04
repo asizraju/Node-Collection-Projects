@@ -25,7 +25,7 @@ exports.createCollection = async (req, res) => {
             Sucess_and_unsucess
         });
 
-        res.status(201).json({ message: 'Account created successfully' });
+        res.status(201).json({ message: 'Account created successfully', collectionID });
     } catch (err) {
         console.error(err);
         res.status(500).json({ error: 'Failed to create account' });
@@ -52,7 +52,6 @@ exports.createCollectionarray =
             user_id
         } = req.body;
 
-        // Ensure that all required fields are arrays (if not already) and store data accordingly
         const collectionID = await Collectiondata.createarray({
             client_name, // Store normal string value
             client_city, // Store normal string value
@@ -72,18 +71,18 @@ exports.createCollectionarray =
         });
 
         // Send response with the created collection ID
-        res.status(201).json({ message: 'Account created successfully' });
+        res.status(201).json({ message: 'Account created successfully', collectionID });
     } catch (err) {
         console.error(err);
         res.status(500).json({ error: 'Failed to create account' });
     }
 };
 
-
 exports.createCollectionarrays = [
     UserImages.single('picture'), // This handles the file upload for the 'picture' field
     async (req, res) => {
         try {
+            
             const picturePath = req.file ? req.file.path : null;
             const data = {
                 client_name: req.body.client_name,
@@ -113,7 +112,9 @@ exports.createCollectionarrays = [
                 bank_type:req.body.bank_type
             };
             const result = await Collectiondata.createarrays(data);            
-            res.status(200).json({ message: 'Data inserted successfully'});
+            res.status(200).json({ message: 'Data inserted successfully', id: result,
+                 Data:data
+             });
         } catch (error) {
             res.status(500).json({ message: 'Error inserting data', error: error.message });
         }
@@ -143,6 +144,23 @@ exports.update = async (req, res) => {
         res.status(400).json({ error: 'Failed to update Collection' });
     }
 };
+
+exports.updatebankdetails = async (req, res) => {
+        try {
+            // Assumes Collectiondata.updatebankdetails is a method that updates bank details in the DB
+            await Collectiondata.updatebankdetails(req.params.id, req.body);
+            
+            // Sending success response when update is successful
+            res.status(200).json({ message: 'Bank details updated successfully' });
+        } catch (error) {
+            // Logging error for debugging purposes
+            console.error(error);
+            
+            // Sending failure response when an error occurs
+            res.status(400).json({ error: 'Failed to update bank details' });
+        }
+    }
+
 
 
 exports.pushClientID = [
@@ -253,8 +271,6 @@ exports.pushToArraysss = async (req, res) => {
     }
 }
 
-
-
 exports.list = async (req, res) => {
     try {
         const connection = await Collectiondata.findAll()
@@ -263,18 +279,6 @@ exports.list = async (req, res) => {
     } catch (error) {
         console.log("List Details Error", error)
         res.status(500).json("Error Accured In List")
-    }
-}
-
-exports.updatebankdetails = async (req, res) => {
-    try {
-
-        await Collectiondata.updatebankdetails(req.params.id, req.body);
-        res.status(200).json({ message: 'Bank details updated successfully' });
-    } catch (error) {
-
-        console.error(error);
-        res.status(400).json({ error: 'Failed to update bank details' });
     }
 }
 

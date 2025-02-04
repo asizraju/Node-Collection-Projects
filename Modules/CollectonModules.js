@@ -7,7 +7,7 @@ class connection {
     // Method to wrap queries in promises
     static query(sql, params) {
         return new Promise((resolve, reject) => {
-            
+
             db.query(sql, params, (err, results) => {
                 if (err) {
                     reject(err);
@@ -44,7 +44,7 @@ class connection {
     //         sent,
     //         user_id
     //     } = data;
-    
+
     //     // Insert the 'send' and 'sent' fields as boolean values (true/false)
     //     const result = await connection.query(
     //         'INSERT INTO collectionlistarrays (client_name, client_contact, client_city, amount, date, updated_amount, paid_amount_time, paid_amount_date, overall_amount, paid_and_unpaid,success_and_unsuccess, send, sent,user_id) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)',
@@ -65,7 +65,7 @@ class connection {
     //             JSON.stringify(user_id)             // Store as boolean value (true/false)
     //         ]
     //     );
-        
+
     //     return result.insertId;
     // }
 
@@ -172,24 +172,23 @@ class connection {
         return result;
     }
 
-
     static async update(client_id, data) {
-        const { 
-            paid_amount_time, 
-            paid_amount_date, 
+        const {
+            paid_amount_time,
+            paid_amount_date,
             paid_and_unpaid,
         } = data;
         await connection.query(
-                'UPDATE collectionlistarrayss SET  paid_amount_time = ?, paid_amount_date = ?,paid_and_unpaid = ? WHERE client_id = ?',
-                [ JSON.stringify(paid_amount_time),     // Store as JSON array (if it is an array)
-                JSON.stringify(paid_amount_date), 
+            'UPDATE collectionlistarrayss SET  paid_amount_time = ?, paid_amount_date = ?,paid_and_unpaid = ? WHERE client_id = ?',
+            [JSON.stringify(paid_amount_time),     // Store as JSON array (if it is an array)
+            JSON.stringify(paid_amount_date),
                 paid_and_unpaid,
-                 client_id]
-            );    
+                client_id]
+        );
     }
-    
+
     static async updatebankdetails(client_id, data) {
-        const { 
+        const {
             today_rate,
             accno,
             amount,
@@ -201,19 +200,19 @@ class connection {
             sender_information
         } = data;
         await connection.query(
-                'UPDATE collectionlistarrayss SET today_rate = ? , accno = ?, amount = ?, bank_name= ?,ifsc_code= ?,accoun_type=?,name_of_the_beneficiary =?,address_of_the_beneficiary =?,sender_information=? WHERE client_id = ?',
-                [  
-                    JSON.stringify(today_rate),
-                    JSON.stringify(accno),
-                    JSON.stringify(amount),
-                    JSON.stringify(bank_name),
-                    JSON.stringify(ifsc_code),
-                    JSON.stringify(accoun_type),
-                    JSON.stringify(name_of_the_beneficiary),
-                    JSON.stringify(address_of_the_beneficiary),
-                    JSON.stringify(sender_information),
-                 client_id]
-            );    
+            'UPDATE collectionlistarrayss SET today_rate = ? , accno = ?, amount = ?, bank_name= ?,ifsc_code= ?,accoun_type=?,name_of_the_beneficiary =?,address_of_the_beneficiary =?,sender_information=? WHERE client_id = ?',
+            [
+                JSON.stringify(today_rate),
+                JSON.stringify(accno),
+                JSON.stringify(amount),
+                JSON.stringify(bank_name),
+                JSON.stringify(ifsc_code),
+                JSON.stringify(accoun_type),
+                JSON.stringify(name_of_the_beneficiary),
+                JSON.stringify(address_of_the_beneficiary),
+                JSON.stringify(sender_information),
+                client_id]
+        );
     }
 
 
@@ -226,13 +225,13 @@ class connection {
     //     }
     // }
 
-    static async pushClientID(client_id,data) {
-        const {user_id,sent} = data
+    static async pushClientID(client_id, data) {
+        const { user_id, sent } = data
         const result = await connection.query(
             'UPDATE collectionlistarrayss SET user_id = ? , sent = ? WHERE client_id = ?',
             [user_id,
-            sent,
-            client_id
+                sent,
+                client_id
             ]
         )
         return result;
@@ -240,21 +239,21 @@ class connection {
 
     static async push(client_id, data) {
         const { paid_amount, paid_amount_date } = data;
-    
+
         try {
             // Step 1: Retrieve the current values from the database
             const [rows] = await connection.promise().query(
                 'SELECT paid_amount, paid_amount_date FROM collectionlistarrayss WHERE client_id = ?',
                 [client_id]
             );
-            
+
             if (rows.length === 0) {
                 throw new Error(`Client with ID ${client_id} not found.`);
             }
-    
+
             let current_paid_amount = JSON.parse(rows[0].paid_amount || '[]');
             let current_paid_amount_date = JSON.parse(rows[0].paid_amount_date || '[]');
-    
+
             // Step 3: Push the new values to the respective arrays
             if (paid_amount) {
                 current_paid_amount.push(paid_amount);
@@ -262,17 +261,17 @@ class connection {
             if (paid_amount_date) {
                 current_paid_amount_date.push(paid_amount_date);
             }
-    
+
             // Step 4: Update the database with the new values (after converting arrays back to JSON)
             await connection.promise().query(
                 'UPDATE collectionlistarrayss SET paid_amount = ?, paid_amount_date = ?  WHERE client_id = ?',
                 [
-                    JSON.stringify(current_paid_amount), 
-                    JSON.stringify(current_paid_amount_date), 
+                    JSON.stringify(current_paid_amount),
+                    JSON.stringify(current_paid_amount_date),
                     client_id
                 ]
             );
-    
+
             return { message: `Successfully updated client ${client_id} with new data.` };
         } catch (error) {
             console.error('Error updating collection:', error);
@@ -284,15 +283,15 @@ class connection {
     static async pushToArray(clientId, field, newValue) {
         // The field (e.g., 'paid_amount') is dynamically provided
         // Append the new value to the existing JSON array
-    
+
         const query = `
             UPDATE collectionlistarrayss 
             SET ${field} = JSON_ARRAY_APPEND(${field}, '$', ?)
             WHERE client_id = ?
         `;
-    
+
         const result = await connection.query(query, [newValue, clientId]);
-    
+
         return result;
     }
 
@@ -304,9 +303,9 @@ class connection {
     //             paid_amount_date = JSON_ARRAY_APPEND(paid_amount_date, '$', ?)
     //         WHERE client_id = ?
     //     `;
-    
+
     //     const result = await connection.query(query, [newValue, dateValue, clientId]);
-    
+
     //     return result;
     // }
 
@@ -318,27 +317,27 @@ class connection {
     //         SET ${field} = JSON_ARRAY_APPEND(${field}, '$', ?)
     //         WHERE client_id = ?
     //     `;
-        
+
     //     // Prepare the result variable
     //     let result = null;
-    
+
     //     // Loop through the data and insert each item
     //     for (const item of data) {
     //         // Prepare the values for the current item [amount, date] as an array
     //         const values = [[item.amount, item.date], client_id];
-            
+
     //         // Execute the query with the correct parameters for each item
     //         result = await connection.query(query, values);
     //     }
-        
+
     //     // Return the final result
     //     return result;
     // }
-    
-    
 
-    static async findAll () {
-        const result = await connection.query ('SELECT * FROM collectionlistarrayss');
+
+
+    static async findAll() {
+        const result = await connection.query('SELECT * FROM collectionlistarrayss');
         return result
     }
 
@@ -347,8 +346,8 @@ class connection {
         return result;
     }
 
-    static async getbyid(client_id){
-        const result = await connection.query ('SELECT FROM collectionlistarrays WHERE client_id = ? ',[client_id])
+    static async getbyid(client_id) {
+        const result = await connection.query('SELECT FROM collectionlistarrays WHERE client_id = ? ', [client_id])
         return result;
     }
 
@@ -357,7 +356,7 @@ class connection {
         try {
             // Fetch all from collectionlistarray
             const result1 = await connection.query('SELECT * FROM collectionlistarray');
-            
+
             // Join collectionlistarray with paidlist
             const query = `
                 SELECT
@@ -383,10 +382,10 @@ class connection {
                 JOIN 
                     paidlist p ON c.client_id = p.client_id;
             `;
-    
+
             // Execute the join query
             const result2 = await connection.query(query);
-    
+
             // Return both results
             return {
                 collectionlists: result1,
@@ -402,7 +401,7 @@ class connection {
         try {
             // Fetching data from collectionlistarrayss
             const resultUser = await connection.query('SELECT * FROM collectionlistarrayss');
-            
+
             // Corrected query with the right JOIN structure
             const query = `
                 SELECT 
@@ -431,26 +430,26 @@ class connection {
                     registertable U ON c.user_id = U.user_id 
             `;
             // Fetching the collection data from registertable and collectionlistarrayss
-             const resultCollection = await connection.query(query);
+            const resultCollection = await connection.query(query);
 
-        // Example of working with the arrays if needed
-        const combinedData = resultUser.map(client => {
-            // Find matching collection for each user
-            const userCollection = resultCollection.filter(collection => 
-                
-                collection.client_id === client.client_id);
+            // Example of working with the arrays if needed
+            const combinedData = resultUser.map(client => {
+                // Find matching collection for each user
+                const userCollection = resultCollection.filter(collection =>
+
+                    collection.client_id === client.client_id);
+                return {
+                    ...client,
+                    collections: userCollection // Adding collections data to user object
+                };
+            });
+
             return {
-                ...client,
-                collections: userCollection // Adding collections data to user object
+                // Userlist: resultUser,
+                Collectionlist: resultCollection,
+                // CombinedData: combinedData // Returning combined data with user and collections merged
             };
-        });
 
-        return {
-            // Userlist: resultUser,
-            Collectionlist: resultCollection,
-            // CombinedData: combinedData // Returning combined data with user and collections merged
-        };
-    
         } catch (error) {
             console.error("Error fetching user details:", error.message);
             throw new Error("Error fetching all details");
