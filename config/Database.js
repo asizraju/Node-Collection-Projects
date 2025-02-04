@@ -1,4 +1,5 @@
 const mysql = require("mysql2");
+require('dotenv').config();
 // RAj
 // const connection = mysql.createPool({
 //     host:'localhost',
@@ -9,6 +10,8 @@ const mysql = require("mysql2");
 //     connectionLimit:100,
 //     queueLimit:0
 // });
+
+
 const connection = mysql.createPool({
   host: process.env.DATABASE_HOST,
   user: process.env.DATABASE_USER,
