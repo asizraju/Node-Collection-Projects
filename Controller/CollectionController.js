@@ -99,6 +99,7 @@ exports.createCollectionarrays = [
                 send: req.body.send,
                 sent: req.body.sent,
                 user_id: req.body.user_id,
+                Distributor_id:req.body.Distributor_id,
                 picture: picturePath,
                 today_rate:req.body.today_rate,
                 accno: req.body.accno,
@@ -175,6 +176,7 @@ exports.pushClientID = [
         }
     }
 ]
+
 
 
 exports.push = async (req, res) => {

@@ -85,6 +85,7 @@ class connection {
             send,
             sent,
             user_id,
+            Distributor_id,
             picture,
             today_rate,
             accno,
@@ -100,7 +101,7 @@ class connection {
 
         // Insert the 'send' and 'sent' fields as boolean values (true/false)
         const result = await connection.query(
-            'INSERT INTO collectionlistarrayss (client_name, client_contact, client_city, amount, date, updated_amount, paid_amount_time, paid_amount_date, overall_amount, paid_and_unpaid, success_and_unsuccess, send, sent, user_id, picture, today_rate,accno,bank_name,ifsc_code,accoun_type,name_of_the_beneficiary,address_of_the_beneficiary,sender_information,narration,bank_type) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)',
+            'INSERT INTO collectionlistarrayss (client_name, client_contact, client_city, amount, date, updated_amount, paid_amount_time, paid_amount_date, overall_amount, paid_and_unpaid, success_and_unsuccess, send, sent, user_id,Distributor_id, picture, today_rate,accno,bank_name,ifsc_code,accoun_type,name_of_the_beneficiary,address_of_the_beneficiary,sender_information,narration,bank_type) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)',
             [
                 client_name,             // Store as plain value
                 JSON.stringify(client_contact), // Store as JSON array (if it is an array)
@@ -116,6 +117,7 @@ class connection {
                 JSON.stringify(send),
                 sent,
                 user_id,
+                Distributor_id,
                 picture,
                 JSON.stringify(today_rate),
                 JSON.stringify(accno),
@@ -236,6 +238,7 @@ class connection {
         )
         return result;
     }
+
 
     static async push(client_id, data) {
         const { paid_amount, paid_amount_date } = data;

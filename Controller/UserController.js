@@ -168,6 +168,12 @@ exports.loginUser = async (req, res) => {
                 message: 'User Not Available'
             });
         }
+        if (user.role !== 'Admin' && user.role !== 'Collection Manager' && user.role !=='Collection Agent') {
+            return res.status(403).send({
+                userFound: true,
+                message: 'Only admins and collection manager and collection agents can log in'
+            });
+        }
 
         // Compare the password with the hashed password in the database
         const isMatch = await bcrypt.compare(password, user.password);
