@@ -140,7 +140,9 @@ class connection {
 
     static async clientupdate(client_id, data) {
         const { client_name, client_contact, client_city, amount, updated_amount, overall_amount, success_and_unsuccess, sent,
+            Distributor_id,
             today_rate,
+            
             accno,
             bank_name,
             ifsc_code,
@@ -152,7 +154,7 @@ class connection {
             bank_type
         } = data
         const result = await connection.query(
-            'UPDATE collectionlistarrayss SET client_name = ?, client_contact = ?, client_city = ?, amount = ?,  updated_amount = ?, overall_amount = ?,  success_and_unsuccess = ? , sent = ?,today_rate = ? , accno = ?,bank_name= ?,ifsc_code= ?,accoun_type=?,name_of_the_beneficiary =?,address_of_the_beneficiary =?,sender_information=? ,narration = ?,bank_type = ? WHERE client_id = ?',
+            'UPDATE collectionlistarrayss SET client_name = ?, client_contact = ?, client_city = ?, amount = ?,  updated_amount = ?, overall_amount = ?,  success_and_unsuccess = ? , sent = ?,Distributor_id = ?, today_rate = ? , accno = ?,bank_name= ?,ifsc_code= ?,accoun_type=?,name_of_the_beneficiary =?,address_of_the_beneficiary =?,sender_information=? ,narration = ?,bank_type = ? WHERE client_id = ?',
             [client_name,
                 JSON.stringify(client_contact),
                 client_city,
@@ -161,6 +163,7 @@ class connection {
                 JSON.stringify(overall_amount),
                 success_and_unsuccess,
                 sent,
+                Distributor_id,
                 JSON.stringify(today_rate),
                 JSON.stringify(accno),
                 JSON.stringify(bank_name),
