@@ -138,6 +138,17 @@ exports.clientupdate = async (req,res) =>{
 }
 
 
+exports.update = async (req, res) => {
+    try {
+        await Collectiondata.update(req.params.id, req.body);
+        console.log(req.body);
+        console.log(req.params.id);
+        res.status(200).json({ message: 'Collection updated successfully' });
+    } catch (err) {
+        console.error(err);
+        res.status(400).json({ error: 'Failed to update Collection' });
+    }
+};
 
 exports.updatebankdetails = async (req, res) => {
         try {
