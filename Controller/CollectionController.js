@@ -7,7 +7,6 @@ const UserImages = require ("../Uploads/Upload")
 
 
 
-
 exports.createCollection = async (req, res) => {
     try {
         const { client_name, client_contact, client_city, amount, date, updated_amount, paid_amount_time, paid_amount_date, overall_amount, paid_and_unpaid, Sucess_and_unsucess } = req.body;
@@ -150,7 +149,6 @@ exports.update = async (req, res) => {
     }
 };
 
-
 exports.updatebankdetails = async (req, res) => {
         try {
             // Assumes Collectiondata.updatebankdetails is a method that updates bank details in the DB
@@ -166,6 +164,7 @@ exports.updatebankdetails = async (req, res) => {
             res.status(400).json({ error: 'Failed to update bank details' });
         }
     }
+
 
 
 

@@ -68,7 +68,6 @@ class connection {
 
     //     return result.insertId;
     // }
-
     static async createarrays(data) {
         const {
             client_name,
@@ -239,6 +238,7 @@ class connection {
 
     //     }
     // }
+
 
     static async pushClientID(client_id, data) {
         const { user_id,assigned_date, sent } = data
