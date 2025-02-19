@@ -150,6 +150,7 @@ exports.update = async (req, res) => {
     }
 };
 
+
 exports.updatebankdetails = async (req, res) => {
         try {
             // Assumes Collectiondata.updatebankdetails is a method that updates bank details in the DB
