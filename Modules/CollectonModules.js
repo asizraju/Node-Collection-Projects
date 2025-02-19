@@ -86,6 +86,7 @@ class connection {
             sent,
             user_id,
             Distributor_id,
+            assigned_date,
             picture,
             today_rate,
             accno,
@@ -101,7 +102,7 @@ class connection {
 
         // Insert the 'send' and 'sent' fields as boolean values (true/false)
         const result = await connection.query(
-            'INSERT INTO collectionlistarrayss (client_name, client_contact, client_city, amount, date, updated_amount, paid_amount_time, paid_amount_date, overall_amount, paid_and_unpaid, success_and_unsuccess, send, sent, user_id,Distributor_id, picture, today_rate,accno,bank_name,ifsc_code,accoun_type,name_of_the_beneficiary,address_of_the_beneficiary,sender_information,narration,bank_type) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)',
+            'INSERT INTO collectionlistarrayss (client_name, client_contact, client_city, amount, date, updated_amount, paid_amount_time, paid_amount_date, overall_amount, paid_and_unpaid, success_and_unsuccess, send, sent, user_id,Distributor_id,assigned_date, picture, today_rate,accno,bank_name,ifsc_code,accoun_type,name_of_the_beneficiary,address_of_the_beneficiary,sender_information,narration,bank_type) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)',
             [
                 client_name,             // Store as plain value
                 JSON.stringify(client_contact), // Store as JSON array (if it is an array)
@@ -118,6 +119,7 @@ class connection {
                 sent,
                 user_id,
                 Distributor_id,
+                JSON.stringify(assigned_date),
                 picture,
                 JSON.stringify(today_rate),
                 JSON.stringify(accno),
@@ -228,10 +230,11 @@ class connection {
     // }
 
     static async pushClientID(client_id, data) {
-        const { user_id, sent } = data
+        const { user_id,assigned_date, sent } = data
         const result = await connection.query(
-            'UPDATE collectionlistarrayss SET user_id = ? , sent = ? WHERE client_id = ?',
+            'UPDATE collectionlistarrayss SET user_id = ? ,assigned_date =?, sent = ? WHERE client_id = ?',
             [user_id,
+                JSON.stringify(assigned_date),
                 sent,
                 client_id
             ]

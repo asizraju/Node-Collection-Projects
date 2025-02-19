@@ -100,6 +100,7 @@ exports.createCollectionarrays = [
                 sent: req.body.sent,
                 user_id: req.body.user_id,
                 Distributor_id:req.body.Distributor_id,
+                assigned_date:req.body.assigned_date,
                 picture: picturePath,
                 today_rate:req.body.today_rate,
                 accno: req.body.accno,
