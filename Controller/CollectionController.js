@@ -7,6 +7,7 @@ const UserImages = require ("../Uploads/Upload")
 
 
 
+
 exports.createCollection = async (req, res) => {
     try {
         const { client_name, client_contact, client_city, amount, date, updated_amount, paid_amount_time, paid_amount_date, overall_amount, paid_and_unpaid, Sucess_and_unsucess } = req.body;
@@ -111,7 +112,9 @@ exports.createCollectionarrays = [
                 address_of_the_beneficiary:req.body.address_of_the_beneficiary,
                 sender_information:req.body.sender_information,
                 narration:req.body.narration,
-                bank_type:req.body.bank_type
+                bank_type:req.body.bank_type,
+                local:req.body.local,
+                international:req.body.international
             };
             const result = await Collectiondata.createarrays(data);            
             res.status(200).json({ message: 'Data inserted successfully', id: result,
@@ -135,17 +138,6 @@ exports.clientupdate = async (req,res) =>{
 }
 
 
-exports.update = async (req, res) => {
-    try {
-        await Collectiondata.update(req.params.id, req.body);
-        console.log(req.body);
-        console.log(req.params.id);
-        res.status(200).json({ message: 'Collection updated successfully' });
-    } catch (err) {
-        console.error(err);
-        res.status(400).json({ error: 'Failed to update Collection' });
-    }
-};
 
 exports.updatebankdetails = async (req, res) => {
         try {

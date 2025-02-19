@@ -97,12 +97,14 @@ class connection {
             address_of_the_beneficiary,
             sender_information,
             narration,
-            bank_type
+            bank_type,
+            local,
+            international
         } = data;
 
         // Insert the 'send' and 'sent' fields as boolean values (true/false)
         const result = await connection.query(
-            'INSERT INTO collectionlistarrayss (client_name, client_contact, client_city, amount, date, updated_amount, paid_amount_time, paid_amount_date, overall_amount, paid_and_unpaid, success_and_unsuccess, send, sent, user_id,Distributor_id,assigned_date, picture, today_rate,accno,bank_name,ifsc_code,accoun_type,name_of_the_beneficiary,address_of_the_beneficiary,sender_information,narration,bank_type) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)',
+            'INSERT INTO collectionlistarrayss (client_name, client_contact, client_city, amount, date, updated_amount, paid_amount_time, paid_amount_date, overall_amount, paid_and_unpaid, success_and_unsuccess, send, sent, user_id,Distributor_id,assigned_date, picture, today_rate,accno,bank_name,ifsc_code,accoun_type,name_of_the_beneficiary,address_of_the_beneficiary,sender_information,narration,bank_type,local,international) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)',
             [
                 client_name,             // Store as plain value
                 JSON.stringify(client_contact), // Store as JSON array (if it is an array)
@@ -130,13 +132,60 @@ class connection {
                 JSON.stringify(address_of_the_beneficiary),
                 JSON.stringify(sender_information),
                 JSON.stringify(narration),
-                JSON.stringify(bank_type)
+                JSON.stringify(bank_type),
+                local,
+            international
             ]
         );
 
         return result.insertId;
     }
 
+
+    static async clientupdate(client_id, data) {
+        const { client_name, client_contact, client_city, amount, updated_amount, overall_amount, success_and_unsuccess, 
+            sent,
+            Distributor_id,
+            today_rate,
+            accno,
+            bank_name,
+            ifsc_code,
+            accoun_type,
+            name_of_the_beneficiary,
+            address_of_the_beneficiary,
+            sender_information,
+            narration,
+            bank_type,
+            local,
+            international
+        } = data
+        const result = await connection.query(
+            'UPDATE collectionlistarrayss SET client_name = ?, client_contact = ?, client_city = ?, amount = ?,  updated_amount = ?, overall_amount = ?,  success_and_unsuccess = ? ,sent = ?, Distributor_id = ?, today_rate = ? , accno = ?,bank_name= ?,ifsc_code= ?,accoun_type=?,name_of_the_beneficiary =?,address_of_the_beneficiary =?,sender_information=? ,narration = ?,bank_type = ?, local = ? , international = ? WHERE client_id = ?',
+            [client_name,
+                JSON.stringify(client_contact),
+                client_city,
+                JSON.stringify(amount),
+                JSON.stringify(updated_amount),
+                JSON.stringify(overall_amount),
+                success_and_unsuccess,
+                sent,
+                Distributor_id,
+                JSON.stringify(today_rate),
+                JSON.stringify(accno),
+                JSON.stringify(bank_name),
+                JSON.stringify(ifsc_code),
+                JSON.stringify(accoun_type),
+                JSON.stringify(name_of_the_beneficiary),
+                JSON.stringify(address_of_the_beneficiary),
+                JSON.stringify(sender_information),
+                JSON.stringify(narration),
+                JSON.stringify(bank_type),
+                local,
+            international,
+                client_id]
+        );
+        return result;
+    }
 
     static async clientupdate(client_id, data) {
         const { client_name, client_contact, client_city, amount, updated_amount, overall_amount, success_and_unsuccess, sent,
