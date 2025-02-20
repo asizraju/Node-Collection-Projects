@@ -170,6 +170,67 @@ static async fetchUserlistIDS(user_id) {
     }
 }
 
+
+static async fetchUserlistIDSS(user_id ,assigned_date) {
+    try {
+        // Query for user details from the registertable based on a specific user_id
+        
+        const resultUser = await User.query('SELECT * FROM registertable WHERE user_id = ?', [user_id]);
+        
+        const query = `
+            SELECT 
+                U.user_id,
+                U.username,
+                U.phone_number,
+                c.client_id, 
+                c.client_name, 
+                c.client_contact, 
+                c.client_city, 
+                c.amount, 
+                c.date, 
+                c.updated_amount, 
+                c.paid_amount_time,
+                c.paid_amount_date,
+                c.overall_amount, 
+                c.paid_and_unpaid,
+                c.success_and_unsuccess, 
+                c.send, 
+                c.sent AS collected_sent
+            FROM
+                registertable U
+            JOIN
+                collectionlistarrayss c ON U.user_id = c.user_id 
+            WHERE
+                U.user_id = ? AND c.assigned_date = ?
+        `; 
+        const resultCollection = await User.query(query, [user_id,assigned_date]);
+
+        // Combine user and collection data into a single object
+        const combinedData = resultUser.map(user => {
+            const userCollection = resultCollection.filter(collection => collection.user_id === user.user_id);
+            // userCollection.forEach(item => {
+            //     item.assigned_date = new Date(); // For example, assigning the current date
+            // });
+            // userCollection.map(users=>{
+            //     const usersCollection = resultCollection.filter (collection => collection.assigned_date === user.assigned_date)
+            // })
+
+            return {
+                ...user,
+                collections: userCollection // Adding collections data to the user object
+            };
+        });
+
+        return {
+            CombinedData: combinedData // Returning combined data with user and collections merged
+        };
+
+    } catch (error) {
+        console.error(error.message, "Error fetching user details");
+        throw new Error("Error fetching user details");
+    }
+}
+
 static async login(email, password) {
     
     const user = await User.findByEmail(email);
