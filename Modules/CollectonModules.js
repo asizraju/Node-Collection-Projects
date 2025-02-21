@@ -240,19 +240,19 @@ class connection {
     // }
 
 
+   
     static async pushClientID(client_id, data) {
-        const { user_id,assigned_date, sent } = data
+        const { user_id,assigned_date , sent } = data
         const result = await connection.query(
-            'UPDATE collectionlistarrayss SET user_id = ? ,assigned_date =?, sent = ? WHERE client_id = ?',
+            'UPDATE collectionlistarrayss SET user_id = ?,  assigned_date = ? ,sent = ? WHERE client_id = ?',
             [user_id,
-                JSON.stringify(assigned_date),
+                assigned_date,
                 sent,
                 client_id
             ]
         )
         return result;
     }
-
 
     static async push(client_id, data) {
         const { paid_amount, paid_amount_date } = data;
