@@ -12,9 +12,10 @@ router.delete("/delete/:id",verifytoken,staffonly,UserController.delete)
 router.put("/updated/:id",UserController.update)
 
 router.get("/fetchUserlistID",UserController.fetchUserID)
-router.post("/fetchUserlistIDS",UserController.fetchUserIDS)
 
-router.get("/fetchUserlistIDS/:id",UserController.fetchUserIDS)
+router.get("/fetchUserlistIDS/:id/:assigned_date",UserController.fetchUserIDS)
+
+// router.get("/fetchUserlistIDS/:id",UserController.fetchUserIDS)
 
 router.post ("/passwordupdated",verifytoken,staffonly,UserController.updatepassword)
 router.post ("/request-password-rest",UserController.requestupdate_password)
