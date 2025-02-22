@@ -133,7 +133,7 @@ class connection {
                 JSON.stringify(narration),
                 JSON.stringify(bank_type),
                 local,
-            international
+                international
             ]
         );
 
@@ -142,7 +142,7 @@ class connection {
 
 
     static async clientupdate(client_id, data) {
-        const { client_name, client_contact, client_city, amount, updated_amount, overall_amount, success_and_unsuccess, 
+        const { client_name, client_contact, client_city, amount, updated_amount, overall_amount, success_and_unsuccess,
             sent,
             Distributor_id,
             today_rate,
@@ -180,7 +180,7 @@ class connection {
                 JSON.stringify(narration),
                 JSON.stringify(bank_type),
                 local,
-            international,
+                international,
                 client_id]
         );
         return result;
@@ -240,9 +240,9 @@ class connection {
     // }
 
 
-   
+
     static async pushClientID(client_id, data) {
-        const { user_id,assigned_date , sent } = data
+        const { user_id, assigned_date, sent } = data
         const result = await connection.query(
             'UPDATE collectionlistarrayss SET user_id = ?,  assigned_date = ? ,sent = ? WHERE client_id = ?',
             [user_id,
