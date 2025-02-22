@@ -11,7 +11,7 @@ router.get("/list",UserController.list)
 router.delete("/delete/:id",verifytoken,staffonly,UserController.delete)
 router.put("/updated/:id",UserController.update)
 
-router.get("/fetchUserlistID",UserController.fetchUserID)
+router.get("/fetchUserlistID/:id",UserController.fetchUserID)
 
 router.post("/fetchUserlistIDS",UserController.fetchUserIDS)
 router.get("/fetchUserlistIDSS/:id/:assigned_date",UserController.fetchUserIDS)

@@ -62,67 +62,10 @@ static async update(user_id,data) {
     }
 }
 
-static async fetchUserlistID() {
-    try {
-        const resultUser = await User.query('SELECT * FROM registertable');
-        
-        const query = `
-            SELECT 
-                U.user_id,
-                U.username,
-                U.phone_number,
-                c.client_id, 
-                c.client_name, 
-                c.client_contact, 
-                c.client_city, 
-                c.amount, 
-                c.date, 
-                c.updated_amount, 
-                c.paid_amount_time,
-                c.paid_amount_date,
-                c.overall_amount, 
-                c.paid_and_unpaid, 
-                c.success_and_unsuccess, 
-                c.send, 
-                c.sent AS collected_sent
-            FROM
-                registertable U
-            JOIN
-                collectionlistarrayss c ON U.user_id = c.user_id
-        `;
-
-        const resultCollection = await User.query(query);
-
-        // Example of working with the arrays if needed
-        const combinedData = resultUser.map(user => {
-            // Find matching collection for each user
-            const userCollection = resultCollection.filter(collection => 
-                
-                collection.user_id === user.user_id);
-            return {
-                ...user,
-                collections: userCollection // Adding collections data to user object
-            };
-        });
-
-        return {
-            // Userlist: resultUser,
-            // Collectionlist: resultCollection,
-            CombinedData: combinedData // Returning combined data with user and collections merged
-        };
-
-    } catch (error) {
-        console.error(error.message, "Error fetching user details");
-        throw new Error("Error fetching all details");
-    }
-}
-
-// static async fetchUserlistIDS(user_id) {
+// static async fetchUserlistID() {
 //     try {
-//         // Query for user details from the registertable based on a specific user_id
-//         const resultUser = await User.query('SELECT * FROM registertable WHERE user_id = ?', [user_id]);
+//         const resultUser = await User.query('SELECT * FROM registertable');
         
-//         // Query for collections data based on the provided user_id
 //         const query = `
 //             SELECT 
 //                 U.user_id,
@@ -146,29 +89,86 @@ static async fetchUserlistID() {
 //                 registertable U
 //             JOIN
 //                 collectionlistarrayss c ON U.user_id = c.user_id
-//             WHERE
-//                 U.user_id = ?
 //         `;
-//         const resultCollection = await User.query(query, [user_id]);
 
-//         // Combine user and collection data into a single object
+//         const resultCollection = await User.query(query);
+
+//         // Example of working with the arrays if needed
 //         const combinedData = resultUser.map(user => {
-//             const userCollection = resultCollection.filter(collection => collection.user_id === user.user_id);
+//             // Find matching collection for each user
+//             const userCollection = resultCollection.filter(collection => 
+                
+//                 collection.user_id === user.user_id);
 //             return {
 //                 ...user,
-//                 collections: userCollection // Adding collections data to the user object
+//                 collections: userCollection // Adding collections data to user object
 //             };
 //         });
 
 //         return {
+//             // Userlist: resultUser,
+//             // Collectionlist: resultCollection,
 //             CombinedData: combinedData // Returning combined data with user and collections merged
 //         };
 
 //     } catch (error) {
 //         console.error(error.message, "Error fetching user details");
-//         throw new Error("Error fetching user details");
+//         throw new Error("Error fetching all details");
 //     }
 // }
+
+static async fetchUserlistID(user_id) {
+    try {
+        // Query for user details from the registertable based on a specific user_id
+        const resultUser = await User.query('SELECT * FROM registertable WHERE user_id = ?', [user_id]);
+        
+        // Query for collections data based on the provided user_id
+        const query = `
+            SELECT 
+                U.user_id,
+                U.username,
+                U.phone_number,
+                c.client_id, 
+                c.client_name, 
+                c.client_contact, 
+                c.client_city, 
+                c.amount, 
+                c.date, 
+                c.updated_amount, 
+                c.paid_amount_time,
+                c.paid_amount_date,
+                c.overall_amount, 
+                c.paid_and_unpaid, 
+                c.success_and_unsuccess, 
+                c.send, 
+                c.sent AS collected_sent
+            FROM
+                registertable U
+            JOIN
+                collectionlistarrayss c ON U.user_id = c.user_id
+            WHERE
+                U.user_id = ?
+        `;
+        const resultCollection = await User.query(query, [user_id]);
+
+        // Combine user and collection data into a single object
+        const combinedData = resultUser.map(user => {
+            const userCollection = resultCollection.filter(collection => collection.user_id === user.user_id);
+            return {
+                ...user,
+                collections: userCollection // Adding collections data to the user object
+            };
+        });
+
+        return {
+            CombinedData: combinedData // Returning combined data with user and collections merged
+        };
+
+    } catch (error) {
+        console.error(error.message, "Error fetching user details");
+        throw new Error("Error fetching user details");
+    }
+}
 
 
 static async fetchUserlistIDS(user_id ,assigned_date) {

@@ -259,22 +259,22 @@ exports.update = [
     }
 ]
 
-exports.fetchUserID = async (req, res) => {
-    try {
-        const user = await User.fetchUserlistID(); // Assuming this method fetches the user list
-        res.status(200).json({
-            success: true,
-            data: user // Sending the fetched user data in the response
-        });
-    } catch (error) {
-        console.error(error.message, "FetchUser List Error");
-        res.status(500).json({
-            success: false,
-            message: "Error occurred while fetching users",
-            error: error.message // Optional: Include the error message for debugging
-        });
-    }
-};
+// exports.fetchUserID = async (req, res) => {
+//     try {
+//         const user = await User.fetchUserlistID(); // Assuming this method fetches the user list
+//         res.status(200).json({
+//             success: true,
+//             data: user // Sending the fetched user data in the response
+//         });
+//     } catch (error) {
+//         console.error(error.message, "FetchUser List Error");
+//         res.status(500).json({
+//             success: false,
+//             message: "Error occurred while fetching users",
+//             error: error.message // Optional: Include the error message for debugging
+//         });
+//     }
+// };
 
 
 
@@ -427,23 +427,22 @@ exports.updatepassword = async (req, res) => {
 
 
 
-// exports.fetchUserIDS = async (req, res) => {
-    
-//     try {
-//         const user = await User.fetchUserlistIDS(req.params.id); // Assuming this method fetches the user list
-//         res.status(200).json({
-//             success: true,
-//             clientdata: user // Sending the fetched user data in the response
-//         });
-//     } catch (error) {
-//         console.error(error.message, "FetchUser List Error");
-//         res.status(500).json({
-//             success: false,
-//             message: "Error occurred while fetching users",
-//             error: error.message // Optional: Include the error message for debugging
-//         });
-//     }
-// };
+exports.fetchUserID = async (req, res) => {    
+    try {
+        const user = await User.fetchUserlistID(req.params.id); // Assuming this method fetches the user list
+        res.status(200).json({
+            success: true,
+            clientdata: user // Sending the fetched user data in the response
+        });
+    } catch (error) {
+        console.error(error.message, "FetchUser List Error");
+        res.status(500).json({
+            success: false,
+            message: "Error occurred while fetching users",
+            error: error.message // Optional: Include the error message for debugging
+        });
+    }
+};
 
 
 exports.fetchUserIDS = async (req, res) => {
