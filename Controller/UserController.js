@@ -424,31 +424,34 @@ exports.updatepassword = async (req, res) => {
 
  // Assuming express-validator is used
 
-exports.fetchUserIDS = async (req, res) => {
+
+
+
+// exports.fetchUserIDS = async (req, res) => {
     
-    try {
-        const user = await User.fetchUserlistIDS(req.params.id); // Assuming this method fetches the user list
-        res.status(200).json({
-            success: true,
-            clientdata: user // Sending the fetched user data in the response
-        });
-    } catch (error) {
-        console.error(error.message, "FetchUser List Error");
-        res.status(500).json({
-            success: false,
-            message: "Error occurred while fetching users",
-            error: error.message // Optional: Include the error message for debugging
-        });
-    }
-};
+//     try {
+//         const user = await User.fetchUserlistIDS(req.params.id); // Assuming this method fetches the user list
+//         res.status(200).json({
+//             success: true,
+//             clientdata: user // Sending the fetched user data in the response
+//         });
+//     } catch (error) {
+//         console.error(error.message, "FetchUser List Error");
+//         res.status(500).json({
+//             success: false,
+//             message: "Error occurred while fetching users",
+//             error: error.message // Optional: Include the error message for debugging
+//         });
+//     }
+// };
 
 
-exports.fetchUserIDSS = async (req, res) => {
+exports.fetchUserIDS = async (req, res) => {
     try {
         const { user_id, assigned_date } = req.body;  // Get user_id and filterdata from the request body
 
         // Call the function to fetch combined data
-        const result = await User.fetchUserlistIDSS(user_id, assigned_date);
+        const result = await User.fetchUserlistIDS(user_id, assigned_date);
 
         // Send the combined data back as the response
         res.status(200).json(result);

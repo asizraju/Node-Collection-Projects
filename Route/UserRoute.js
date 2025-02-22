@@ -12,7 +12,7 @@ router.delete("/delete/:id",verifytoken,staffonly,UserController.delete)
 router.put("/updated/:id",UserController.update)
 
 router.get("/fetchUserlistID",UserController.fetchUserID)
-router.post("/fetchUserlistIDSS",UserController.fetchUserIDSS)
+router.post("/fetchUserlistIDS",UserController.fetchUserIDS)
 
 router.get("/fetchUserlistIDS/:id",UserController.fetchUserIDS)
 
