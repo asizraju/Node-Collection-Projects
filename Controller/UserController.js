@@ -448,6 +448,22 @@ exports.updatepassword = async (req, res) => {
 
 exports.fetchUserIDS = async (req, res) => {
     try {
+        const { user_id, assigned_date } = req.body;  // Get user_id and filterdata from the request body
+
+        // Call the function to fetch combined data
+        const result = await User.fetchUserlistIDS(user_id, assigned_date);
+
+        // Send the combined data back as the response
+        res.status(200).json(result);
+    } catch (error) {
+        console.error(error.message);
+        res.status(500).json({ error: 'Error fetching user details' });
+    }
+};
+
+
+exports.fetchUserIDSS = async (req, res) => {
+    try {
         const user = await User.fetchUserlistIDS(req.params.id, req.params.assigned_date);
         // Return success response
         res.status(200).json({

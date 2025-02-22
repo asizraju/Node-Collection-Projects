@@ -13,8 +13,8 @@ router.put("/updated/:id",UserController.update)
 
 router.get("/fetchUserlistID",UserController.fetchUserID)
 
-router.get("/fetchUserlistIDS/:id/:assigned_date",UserController.fetchUserIDS)
-
+router.post("/fetchUserlistIDS",UserController.fetchUserIDS)
+router.get("/fetchUserlistIDSS/:id/:assigned_date",UserController.fetchUserIDS)
 // router.get("/fetchUserlistIDS/:id",UserController.fetchUserIDS)
 
 router.post ("/passwordupdated",verifytoken,staffonly,UserController.updatepassword)
