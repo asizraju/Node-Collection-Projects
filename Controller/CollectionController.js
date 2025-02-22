@@ -169,7 +169,7 @@ exports.updatebankdetails = async (req, res) => {
 
 
 
-exports.pushClientID = [
+exports.pushClientID = 
     async (req, res) => {
         try {
             await Collectiondata.pushClientID(req.params.id, req.body)
@@ -180,7 +180,7 @@ exports.pushClientID = [
             res.status(400).json({ error: error.message || "Failed to Updated Collection List" })
         }
     }
-]
+
 
 
 
