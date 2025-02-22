@@ -246,7 +246,7 @@ class connection {
         const result = await connection.query(
             'UPDATE collectionlistarrayss SET user_id = ?,  assigned_date = ? ,sent = ? WHERE client_id = ?',
             [user_id,
-                assigned_date,
+                JSON.stringify(assigned_date),
                 sent,
                 client_id
             ]
