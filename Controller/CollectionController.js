@@ -169,17 +169,27 @@ exports.updatebankdetails = async (req, res) => {
 
 
 
-exports.pushClientID = 
-    async (req, res) => {
-        try {
-            await Collectiondata.pushClientID(req.params.id, req.body)
-            res.status(200).json({ message: 'Collection Team Assinging Successfully' })
+exports.pushClientID = async (req, res) => {
+    try {
+        const { user_id, assigned_date, sent, client_id } = req.body;
 
-        } catch (error) {
-            console.error(error.message, "User ID Not Updated")
-            res.status(400).json({ error: error.message || "Failed to Updated Collection List" })
-        }
+        // Convert assigned_date to the correct format (YYYY-MM-DD)
+        const formattedDate = new Date(assigned_date).toISOString().split('T')[0];
+
+        // Call the database function to update the data
+        const result = await connection.pushClientID(client_id, {
+            user_id,
+            assigned_date: formattedDate, // Use the correctly formatted date
+            sent
+        });
+
+        return res.status(200).json({ success: true, data: result });
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ success: false, message: 'Server Error', error });
     }
+};
+
 
 
 
