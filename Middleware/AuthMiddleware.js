@@ -29,8 +29,8 @@ exports.adminonly = (req, res, next) => {
  
 // Middleware for Collection Manager or Collection Agent only
 exports.staffonly = (req, res, next) => {
-    if (req.role !== "Collection Manager"  && req.role !== "Admin" && req.role !== "Collection Agent") {
-        return res.status(403).json({ error: "Access Denied. Admin or Collection Agent Only or Collection Manager" });
+    if (req.role !== "Collection Manager"  && req.role !== "Admin") {
+        return res.status(403).json({ error: "Access Denied. Admin or Collection Agent Only" });
     }
     next();
     // exports.staffonly = (req, res, next) => {
@@ -39,3 +39,16 @@ exports.staffonly = (req, res, next) => {
     //     }
     //     next();
 };
+
+
+// exports.staffonly = (req, res, next) => {
+//     if (req.role !== "Collection Manager"  && req.role !== "Admin" && req.role !== "Collection Agent") {
+//         return res.status(403).json({ error: "Access Denied. Admin or Collection Agent Only or Collection Manager" });
+//     }
+//     next();
+//     // exports.staffonly = (req, res, next) => {
+//     //     if (req.role !== "Collection Manager" && req.role !== "Collection Agent") {
+//     //         return res.status(403).json({ error: "Access Denied. Collection Agent or Collection Manager Only" });
+//     //     }
+//     //     next();
+// };
