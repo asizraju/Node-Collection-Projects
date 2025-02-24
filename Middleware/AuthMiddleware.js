@@ -30,7 +30,7 @@ exports.adminonly = (req, res, next) => {
 // Middleware for Collection Manager or Collection Agent only
 exports.staffonly = (req, res, next) => {
     if (req.role !== "Collection Manager"  && req.role !== "Admin" && req.role !== "Collection Agent") {
-        return res.status(403).json({ error: "Access Denied. Admin or Collection Agent Only" });
+        return res.status(403).json({ error: "Access Denied. Admin or Collection Agent Only or Collection Manager" });
     }
     next();
     // exports.staffonly = (req, res, next) => {
