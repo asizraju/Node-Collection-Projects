@@ -21,7 +21,7 @@ router.post('/acc_insertarray',CollectionController.createCollectionarray)
 
 router.post('/acc_insertarrays',CollectionController.createCollectionarrays)
 
-router.get ('/acc_list',verifytoken,CollectionController.list);
+router.get ('/acc_list',CollectionController.list);
 // router.get ('/acc_list',CollectionController.list);
 
 router.get ('/acc_list_manager',CollectionController.list);
