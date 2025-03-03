@@ -259,6 +259,19 @@ exports.update = [
     }
 ]
 
+
+exports.updatedistributoramount = async (req, res) => {
+    try {
+        await User.updateDistributorAmounts(req.params.id, req.body);                
+        res.status(200).json({ message: "Today amount assigned successfully" });
+    } catch (error) {
+        console.error("Error updating distributor amount:", error);
+        res.status(500).json({
+            error: error.message || "Failed to update distributor ID in list",
+        });
+    }
+};
+
 // exports.fetchUserID = async (req, res) => {
 //     try {
 //         const user = await User.fetchUserlistID(); // Assuming this method fetches the user list

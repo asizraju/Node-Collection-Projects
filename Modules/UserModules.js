@@ -62,6 +62,31 @@ static async update(user_id,data) {
     }
 }
 
+
+static async updateDistributorAmounts(user_id, data) {
+    const { today_rate_date, Distributor_today_rate } = data;
+
+    try {
+        const result = await User.query(
+            `UPDATE registertable
+             SET  
+                 today_rate_date = ?, 
+                 Distributor_today_rate = CASE 
+                     WHEN today_rate_date < CURDATE() - INTERVAL 1 DAY THEN NULL 
+                     ELSE ? 
+                 END
+             WHERE user_id = ?`,
+            [today_rate_date, Distributor_today_rate, user_id]
+        );
+
+        return { success: true, result };
+    } catch (error) {
+        console.error("Error updating distributor amounts:", error);
+        return { success: false, error: error.message };
+    }
+}
+
+
 // static async fetchUserlistID() {
 //     try {
 //         const resultUser = await User.query('SELECT * FROM registertable');
