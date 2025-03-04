@@ -83,7 +83,7 @@ static async updateDistributorAmounts(user_id, data) {
         await User.query(
             `CREATE EVENT IF NOT EXISTS reset_distributor_rate
              ON SCHEDULE EVERY 1 DAY
-             DO UPDATE registertable SET Distributor_today_rate = NULL 
+             DO UPDATE registertable SET Distributor_today_rate = 0.00 
              WHERE today_rate_date < CURDATE() - INTERVAL 1 DAY`
         );
 
