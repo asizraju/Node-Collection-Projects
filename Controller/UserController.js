@@ -259,18 +259,36 @@ exports.update = [
     }
 ]
 
+const moment = require("moment"); // Ensure moment.js is installed (npm install moment)
 
-exports.updatedistributoramount = async (req, res) => {
+exports.updatedistributoramount = async (req, res) => { 
     try {
-        await User.updateDistributorAmounts(req.params.id, req.body);                
+        // Extract data from request
+        let { today_rate_date, Distributor_today_rate } = req.body;
+
+        // Convert today_rate_date from "dd-mm-yyyy" to "yyyy-mm-dd" (MySQL standard)
+        const formattedDate = moment(today_rate_date, "DD-MM-YYYY").format("YYYY-MM-DD");
+
+        // Prepare data object with formatted date
+        const updatedData = {
+            today_rate_date: formattedDate,
+            Distributor_today_rate
+        };
+
+        // Call update function with formatted data
+        await User.updateDistributorAmounts(req.params.id, updatedData);                
+
+        // Success response
         res.status(200).json({ message: "Today amount assigned successfully" });
+
     } catch (error) {
         console.error("Error updating distributor amount:", error);
         res.status(500).json({
-            error: error.message || "Failed to update distributor ID in list",
+            error: error.message || "Failed to update distributor amount",
         });
     }
 };
+
 
 // exports.fetchUserID = async (req, res) => {
 //     try {
