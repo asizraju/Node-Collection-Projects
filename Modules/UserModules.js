@@ -62,29 +62,60 @@ static async update(user_id,data) {
     }
 }
 
-
 static async updateDistributorAmounts(user_id, data) {
     const { today_rate_date, Distributor_today_rate } = data;
 
     try {
+        // Ensure user_id is provided
+        if (!user_id) {
+            throw new Error("User ID is required");
+        }
+
+        // Update the distributor amount for the user
         const result = await User.query(
             `UPDATE registertable
-             SET  
-                 today_rate_date = ?, 
-                 Distributor_today_rate = CASE 
-                     WHEN today_rate_date < CURDATE() - INTERVAL 1 DAY THEN NULL 
-                     ELSE ? 
-                 END
+             SET today_rate_date = ?, Distributor_today_rate = ?
              WHERE user_id = ?`,
             [today_rate_date, Distributor_today_rate, user_id]
         );
 
-        return { success: true, result };
+        // Create an event to reset distributor rate daily (for all users)
+        await User.query(
+            `CREATE EVENT IF NOT EXISTS reset_distributor_rate
+             ON SCHEDULE EVERY 1 DAY
+             DO UPDATE registertable SET Distributor_today_rate = NULL 
+             WHERE today_rate_date < CURDATE() - INTERVAL 1 DAY`
+        );
+
+        return { success: true, message: "Updated and reset event scheduled.", result };
     } catch (error) {
         console.error("Error updating distributor amounts:", error);
-        return { success: false, error: error.message };
+        throw error;
     }
 }
+
+// static async updateDistributorAmounts(user_id, data) {
+//     const { today_rate_date, Distributor_today_rate } = data;
+
+//     try {
+//         const result = await User.query(
+//             `UPDATE registertable
+//              SET  
+//                  today_rate_date = ?, 
+//                  Distributor_today_rate = CASE 
+//                      WHEN today_rate_date < CURDATE() - INTERVAL 1 DAY THEN NULL 
+//                      ELSE ? 
+//                  END
+//              WHERE user_id = ?`,
+//             [today_rate_date, Distributor_today_rate, user_id]
+//         );
+
+//         return { success: true, result };
+//     } catch (error) {
+//         console.error("Error updating distributor amounts:", error);
+//         return { success: false, error: error.message };
+//     }
+// }
 
 
 // static async fetchUserlistID() {
