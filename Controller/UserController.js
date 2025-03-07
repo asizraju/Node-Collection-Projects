@@ -97,7 +97,7 @@ exports.createUser = [
             username: req.body.username,
             phone_number: req.body.phone_number,
             role: req.body.role,
-            sent: req.body.sent || 0  // Providing a default value for `sent`
+            // sent: req.body.sent || 0  // Providing a default value for `sent`
         };
 
         const result = await User.createdistribute(distributor);

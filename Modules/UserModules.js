@@ -40,12 +40,12 @@ static async create (data) {
 
 
 static async createdistribute(data) {
-    const { username, phone_number, role, sent } = data;
+    const { username, phone_number, role } = data;
 
     try {
         const result = await User.query(
-            'INSERT INTO registertable (username, phone_number, role, sent) VALUES (?, ?, ?, ?)',
-            [username, phone_number, role, sent]
+            'INSERT INTO registertable (username, phone_number, role) VALUES (?, ?, ?)',
+            [username, phone_number, role]
         );
 
         return result.insertId;  // Corrected insertid to insertId
