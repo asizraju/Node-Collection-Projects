@@ -91,6 +91,25 @@ exports.createUser = [
   ];
 
   
+  exports.createDistributor = async (req, res) => {
+    try {
+        const distributor = {
+            username: req.body.username,
+            phone_number: req.body.phone_number,
+            role: req.body.role,
+            sent: req.body.sent || 0  // Providing a default value for `sent`
+        };
+
+        const result = await User.createdistribute(distributor);
+        res.status(201).json({ message: "Distributor Created Successfully", id: result });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: "Distributor Not Created", details: error.message });
+    }
+};
+
+
+  
 // exports.loginUser = async (req, res) => {
 //     try {
 //         const { email, password } = req.body;

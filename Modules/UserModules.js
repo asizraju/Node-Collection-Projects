@@ -38,6 +38,23 @@ static async create (data) {
     return result.insertid;
 }
 
+
+static async createdistribute(data) {
+    const { username, phone_number, role, sent } = data;
+
+    try {
+        const result = await User.query(
+            'INSERT INTO registertable (username, phone_number, role, sent) VALUES (?, ?, ?, ?)',
+            [username, phone_number, role, sent]
+        );
+
+        return result.insertId;  // Corrected insertid to insertId
+    } catch (error) {
+        throw new Error("Database error: " + error.message);
+    }
+}
+
+
 static async findAll() {
     const result = await User.query('SELECT * FROM registertable');
     return result; // Array of user objects
