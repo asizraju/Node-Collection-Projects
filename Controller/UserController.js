@@ -277,34 +277,36 @@ exports.update = [
         }
     }
 ]
+const moment = require("moment");
 
-const moment = require("moment"); // Ensure moment.js is installed (npm install moment)
-
-exports.updatedistributoramount = async (req, res) => { 
+exports.updatedistributoramount= async (req, res) => { 
     try {
-        // Extract data from request
-        let { today_rate_date, Distributor_today_rate } = req.body;
+        let dataArray = req.body;  // Expecting an array
 
-        // Convert today_rate_date from "dd-mm-yyyy" to "yyyy-mm-dd" (MySQL standard)
-        const formattedDate = moment(today_rate_date, "DD-MM-YYYY").format("YYYY-MM-DD");
+        if (!Array.isArray(dataArray) || dataArray.length === 0) {
+            return res.status(400).json({ error: "Input must be a non-empty array." });
+        }
 
-        // Prepare data object with formatted date
-        const updatedData = {
-            today_rate_date: formattedDate,
-            Distributor_today_rate
-        };
+        // Format the date for each entry
+        dataArray = dataArray.map(({ user_id, today_rate_date, Distributor_today_rate }) => {
+            if (!user_id || !today_rate_date || Distributor_today_rate === undefined) {
+                throw new Error(`Invalid data for user_id: ${user_id}`);
+            }
 
-        // Call update function with formatted data
-        await User.updateDistributorAmounts(req.params.id, updatedData);                
+            return {
+                user_id,
+                today_rate_date: moment(today_rate_date, "DD-MM-YYYY").format("YYYY-MM-DD"),
+                Distributor_today_rate
+            };
+        });
 
-        // Success response
-        res.status(200).json({ message: "Today amount assigned successfully" });
+        // Call the function with the correctly formatted data array
+        await User.updateDistributorAmounts(dataArray);
 
+        res.status(200).json({ message: "All users updated successfully" });
     } catch (error) {
         console.error("Error updating distributor amount:", error);
-        res.status(500).json({
-            error: error.message || "Failed to update distributor amount",
-        });
+        res.status(500).json({ error: error.message || "Failed to update distributor amount" });
     }
 };
 

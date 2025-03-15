@@ -13,7 +13,8 @@ router.put("/updated/:id",UserController.update)
 router.post("/distrbutorCreated",upload.none(),UserController.createDistributor)
 
 router.get("/fetchUserlistID/:id",UserController.fetchUserID)
-router.put("/updatedistributoramount/:id",UserController.updatedistributoramount)
+
+router.post("/update-distributor-amount",UserController.updatedistributoramount)
 
 
 router.post("/fetchUserlistIDS",UserController.fetchUserIDS)

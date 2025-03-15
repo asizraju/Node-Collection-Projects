@@ -79,38 +79,46 @@ static async update(user_id,data) {
     }
 }
 
-static async updateDistributorAmounts(user_id, data) {
-    const { today_rate_date, Distributor_today_rate } = data;
-
+static async updateDistributorAmounts(dataArray) {
     try {
-        // Ensure user_id is provided
-        if (!user_id) {
-            throw new Error("User ID is required");
+        if (!Array.isArray(dataArray) || dataArray.length === 0) {
+            throw new Error("Invalid input. An array of user data is required.");
         }
 
-        // Update the distributor amount for the user
-        const result = await User.query(
-            `UPDATE registertable
-             SET today_rate_date = ?, Distributor_today_rate = ?
-             WHERE user_id = ?`,
-            [today_rate_date, Distributor_today_rate, user_id]
-        );
+        // Loop through each user data and update the registertable
+        const queries = dataArray.map(({ user_id, today_rate_date, Distributor_today_rate }) => {
+            if (!user_id || !today_rate_date || Distributor_today_rate === undefined) {
+                throw new Error(`Invalid data for user_id: ${user_id}`);
+            }
 
-        // Create an event to reset distributor rate daily (for all users)
-        await User.query(
-            `CREATE EVENT IF NOT EXISTS reset_distributor_rate
-             ON SCHEDULE EVERY 1 DAY
-             DO UPDATE registertable SET Distributor_today_rate = 0.00 
-             WHERE today_rate_date < CURDATE() - INTERVAL 1 DAY`
-        );
+            return User.query(
+                `UPDATE registertable 
+                 SET today_rate_date = ?, Distributor_today_rate = ? 
+                 WHERE user_id = ?`,
+                [today_rate_date, Distributor_today_rate, user_id]
+            );
+        });
 
-        return { success: true, message: "Updated and reset event scheduled.", result };
+        // Execute all queries
+        await Promise.all(queries);
+
+        // Ensure the event exists to reset distributor rates
+        await User.query(`
+            CREATE EVENT IF NOT EXISTS reset_distributor_rate
+            ON SCHEDULE EVERY 1 DAY
+            STARTS TIMESTAMP(CURDATE() + INTERVAL 1 DAY)
+            DO
+            UPDATE registertable 
+            SET Distributor_today_rate = 0.00 
+            WHERE today_rate_date = CURDATE() - INTERVAL 1 DAY
+        `);
+
+        return { success: true, message: "All users updated successfully, reset event checked." };
     } catch (error) {
         console.error("Error updating distributor amounts:", error);
         throw error;
     }
 }
-
 // static async updateDistributorAmounts(user_id, data) {
 //     const { today_rate_date, Distributor_today_rate } = data;
 
