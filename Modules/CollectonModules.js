@@ -241,18 +241,38 @@ class connection {
 
 
 
-    static async pushClientID(client_id, data) {
-        const { user_id, assigned_date, sent } = data
-        const result = await connection.query(
-            'UPDATE collectionlistarrayss SET user_id = ?,  assigned_date = ? ,sent = ? WHERE client_id = ?',
-            [user_id,
-                JSON.stringify(assigned_date),
-                sent,
-                client_id
-            ]
-        )
-        return result;
+    static async pushClientID(data) {
+        try {
+            if (!Array.isArray(data) || data.length === 0) {
+                throw new Error("Invalid Input: Data should be a non-empty array.");
+            }
+    
+            const queries = [];
+    
+            for (const entry of data) {
+                const { user_id, assigned_date, sent, client_id } = entry;
+    
+                if (!user_id || !assigned_date || !client_id || sent == null) {
+                    throw new Error(`Invalid data: Missing required fields for client_id: ${client_id || "unknown"}`);
+                }
+    
+                queries.push(
+                    connection.query(
+                        "UPDATE collectionlistarrayss SET user_id = ?, assigned_date = ?, sent = ? WHERE client_id = ?",
+                        [user_id, JSON.stringify(assigned_date), sent, client_id]
+                    )
+                );
+            }
+    
+            const results = await Promise.all(queries);
+            return results;
+            
+        } catch (error) {
+            console.error("Error in pushClientID:", error.message);
+            throw error;
+        }
     }
+    
 
     static async push(client_id, data) {
         const { paid_amount, paid_amount_date } = data;

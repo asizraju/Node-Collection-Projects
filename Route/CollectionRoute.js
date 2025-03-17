@@ -31,7 +31,7 @@ router.delete('/acc_delete/:id',CollectionController.delete)
 router.put('/acc_updated/:id',CollectionController.update)//
 router.put ('/updated_bankdetails/:id',CollectionController.updatebankdetails)
 router.put ('/acc_clientupdated/:id',CollectionController.clientupdate)
-router.put ("/client_IDupdated/:id",CollectionController.pushClientID)
+router.post ("/client_IDupdated",CollectionController.pushClientID)
 router.post('/push/:client_id',CollectionController.push)
 router.post('/pusharray',CollectionController.pushToArray)
 router.post('/pusharrays',CollectionController.pushToArrays)

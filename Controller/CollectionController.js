@@ -169,18 +169,15 @@ exports.updatebankdetails = async (req, res) => {
 
 
 
-exports.pushClientID = 
-    async (req, res) => {
-        try {
-            await Collectiondata.pushClientID(req.params.id, req.body)
-            res.status(200).json({ message: 'Collection Team Assinging Successfully' })
-
-        } catch (error) {
-            console.error(error.message, "User ID Not Updated")
-            res.status(400).json({ error: error.message || "Failed to Updated Collection List" })
-        }
+exports.pushClientID = async (req, res) => {
+    try {
+        await Collectiondata.pushClientID(req.body);
+        res.status(200).json({ message: 'Collection Team Assigned Successfully' });
+    } catch (error) {
+        console.error("Error in pushClientID:", error.message);
+        res.status(400).json({ error: error.message || "Failed to Update Collection List" });
     }
-
+};
     
 // exports.pushClientID = async (req, res) => {
 //     try {
